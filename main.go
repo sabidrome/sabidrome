@@ -7,28 +7,36 @@ import (
 	"github.com/sabidrome/sabidrome/core"
 )
 
+func AddNewBook(db *core.Database) {
+    path := os.Args[2]
+
+    fmt.Println("[Debug] Begin add a new book")
+    core.CreateDatabase(db)
+    core.CreateDatabaseBookshelfTable(db)
+    book_struct := core.GetBookMetadataFromPath(path)
+    core.AddBookToDatabase(db, &book_struct)
+    fmt.Println("[Debug] End add a new book")
+
+}
+
 func main() {
+
+    databaseObject := core.Database {
+        Type: "sqlite3",
+        Path: "./sabidrome.db",
+    }
+
     command := os.Args[1]
 
-    if command == "add" {
-        path := os.Args[2]
-        fmt.Println("Hello, World!")
+    switch command {
+        case "add":
+            AddNewBook(&databaseObject)
 
-	databaseObject := core.Database {
-		Type: "sqlite3",
-		Path: "./sabidrome.db",
-	}
+        case "rm":
+            fmt.Println("Oh no, rm not implemented")
 
-	core.CreateDatabase(&databaseObject)
-	core.CreateDatabaseBookshelfTable(&databaseObject)
-	book_struct := core.GetBookMetadataFromPath(path)
-	core.AddBookToDatabase(&databaseObject, &book_struct)
-
-
-    } else if command == "rm" {
-        fmt.Println("Oh no")
-
-    } else {
-        fmt.Println("Ah ha")
+        default:
+            fmt.Println("Unknown command")
     }
+
 }
