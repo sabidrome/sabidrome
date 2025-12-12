@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"os"
 	"database/sql"
 
 	"github.com/taylorskalyo/goreader/epub"
@@ -112,21 +111,5 @@ func AddBookToDatabase(d *Database, b *Book) {
     fmt.Printf("Book %s was create succesfully.\n", b.Name)
 
     fmt.Println(result.LastInsertId())
-
-}
-
-func main() {
-
-    fmt.Println("Hello, World!")
-
-    databaseObject := Database {
-        Type: "sqlite3",
-        Path: "./sabidrome.db",
-    }
-
-    CreateDatabase(&databaseObject)
-    CreateDatabaseBookshelfTable(&databaseObject)
-    book_struct := GetBookMetadataFromPath(os.Args[1])
-    AddBookToDatabase(&databaseObject, &book_struct)
 
 }

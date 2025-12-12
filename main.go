@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"fmt"
 
 	"github.com/sabidrome/sabidrome/core"
 )
@@ -11,11 +12,23 @@ func main() {
 
     if command == "add" {
         path := os.Args[2]
+        fmt.Println("Hello, World!")
+
+	databaseObject := core.Database {
+		Type: "sqlite3",
+		Path: "./sabidrome.db",
+	}
+
+	core.CreateDatabase(&databaseObject)
+	core.CreateDatabaseBookshelfTable(&databaseObject)
+	book_struct := core.GetBookMetadataFromPath(path)
+	core.AddBookToDatabase(&databaseObject, &book_struct)
+
 
     } else if command == "rm" {
-        fmt.println("Oh no")
+        fmt.Println("Oh no")
 
     } else {
-        fmt.println("Ah ha")
+        fmt.Println("Ah ha")
     }
 }
