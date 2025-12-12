@@ -1,4 +1,4 @@
-package add_book_to_db
+package core
 
 import (
 	"fmt"
