@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/sabidrome/sabidrome/core/add_book_to_db"
+	"github.com/sabidrome/sabidrome/core"
 )
 
 func main() {
