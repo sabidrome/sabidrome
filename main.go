@@ -7,16 +7,7 @@ import (
 	"github.com/sabidrome/sabidrome/core"
 )
 
-func AddNewBook(db *core.Database, path string) {
-
-    fmt.Println("[Debug] Begin add a new book")
-    core.CreateDatabase(db)
-    core.CreateDatabaseBookshelfTable(db)
-    book_struct := core.GetBookMetadataFromPath(path)
-    core.AddBookToDatabase(db, &book_struct)
-    fmt.Println("[Debug] End add a new book")
-
-}
+func NewBookWatcher()
 
 func main() {
 
@@ -30,7 +21,7 @@ func main() {
 
     switch command {
         case "add":
-            AddNewBook(&db, path)
+            core.AddBook(&db, path)
 
         case "rm":
             fmt.Println("Oh no, rm not implemented")

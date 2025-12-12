@@ -116,3 +116,14 @@ func AddBookToDatabase(d *Database, b *Book) {
     fmt.Printf(" -> Book '%s' added to database.\n", b.Name)
 
 }
+
+func AddBook(db *Database, path string) {
+
+	fmt.Println("[Debug] Begin add a new book")
+	CreateDatabase(db)
+	CreateDatabaseBookshelfTable(db)
+	book_struct := GetBookMetadataFromPath(path)
+	AddBookToDatabase(db, &book_struct)
+	fmt.Println("[Debug] End add a new book")
+
+}
