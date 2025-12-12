@@ -7,8 +7,6 @@ import (
 	"github.com/sabidrome/sabidrome/core"
 )
 
-func NewBookWatcher()
-
 func main() {
 
     db := core.Database {
@@ -17,14 +15,17 @@ func main() {
     }
 
     command := os.Args[1]
-    path    := os.Args[2]
 
     switch command {
         case "add":
+            path    := os.Args[2]
             core.AddBook(&db, path)
 
         case "rm":
             fmt.Println("Oh no, rm not implemented")
+
+        case "watch":
+            core.FilesystemWatcher()
 
         default:
             fmt.Println("Unknown command")

@@ -4,46 +4,12 @@ import (
 	"fmt"
 	"database/sql"
 
-	"github.com/taylorskalyo/goreader/epub"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-
-type Book struct {
-	Name string
-	Author string
-	Path string
-}
 
 type Database struct {
     Type string
     Path string
-}
-
-func GetBookMetadataFromPath(path string) ( bookObject Book ) {
-
-    rc, err := epub.OpenReader(path)
-    if err != nil {
-        panic(err)
-    }
-    defer rc.Close()
-
-    book := rc.Rootfiles[0]
-
-    bookObject = Book {
-        Name: book.Title,
-        Author: book.Creator,
-	Path: path,
-    }
-
-    fmt.Println(" -> File information extracted.")
-
-    fmt.Printf("    -> %s \n", bookObject.Name)
-    fmt.Printf("    -> %s \n", bookObject.Author)
-    fmt.Printf("    -> %s \n", bookObject.Path)
-
-    return bookObject
-
 }
 
 // func CreateDatabase() (db *sql.DB) {
