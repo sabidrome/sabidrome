@@ -12,6 +12,7 @@ import (
 type Book struct {
 	Name string
 	Author string
+	Path string
 }
 
 type Database struct {
@@ -32,10 +33,12 @@ func GetBookMetadataFromPath(path string) ( bookObject Book ) {
     bookObject = Book {
         Name: book.Title,
         Author: book.Creator,
+	Path: path,
     }
 
     fmt.Println(bookObject.Name)
     fmt.Println(bookObject.Author)
+    fmt.Println(bookObject.Path)
 
     return bookObject
 
@@ -72,7 +75,8 @@ func CreateDatabaseBookshelfTable(d *Database) {
     query := `CREATE TABLE IF NOT EXISTS bookshelf (
             bookid INTEGER PRIMARY KEY AUTOINCREMENT,
             name   TEXT NOT NULL,
-            author TEXT NOT NULL
+            author TEXT NOT NULL,
+            path   TEXT NOT NULL
 
             );`
 
@@ -95,7 +99,7 @@ func CreateDatabaseBookshelfTable(d *Database) {
 
 func AddBookToDatabase(d *Database, b *Book) {
 
-    query := `INSERT INTO bookshelf (name, author) VALUES (?, ?);`
+    query := `INSERT INTO bookshelf (name, author, path) VALUES (?, ?, ?);`
 
     db, err := sql.Open(d.Type, d.Path)
     if err != nil {
@@ -103,7 +107,7 @@ func AddBookToDatabase(d *Database, b *Book) {
         return
     }
 
-    result, err := db.Exec(query, b.Name, b.Author)
+    result, err := db.Exec(query, b.Name, b.Author, b.Path)
     if err != nil {
         return
     }
