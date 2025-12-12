@@ -1,4 +1,4 @@
-package main
+package add_book_to_db
 
 import (
 	"fmt"
