@@ -36,9 +36,11 @@ func GetBookMetadataFromPath(path string) ( bookObject Book ) {
 	Path: path,
     }
 
-    fmt.Println(bookObject.Name)
-    fmt.Println(bookObject.Author)
-    fmt.Println(bookObject.Path)
+    fmt.Println(" -> File information extracted.")
+
+    fmt.Printf("    -> %s \n", bookObject.Name)
+    fmt.Printf("    -> %s \n", bookObject.Author)
+    fmt.Printf("    -> %s \n", bookObject.Path)
 
     return bookObject
 
@@ -55,7 +57,7 @@ func CreateDatabase(d *Database) {
         return
     }
 
-    fmt.Println("Connected to the SQLite database succesfully.")
+    fmt.Println(" -> Connected to the SQLite database.")
 
     var sqliteVersion string
     err = db.QueryRow("select sqlite_version()").Scan(&sqliteVersion)
@@ -66,7 +68,7 @@ func CreateDatabase(d *Database) {
 
     defer db.Close()
 
-    fmt.Println(sqliteVersion)
+    fmt.Printf(" -> SQLite version is %s \n", sqliteVersion)
 
 }
 
@@ -86,14 +88,13 @@ func CreateDatabaseBookshelfTable(d *Database) {
         return
     }
 
-    result, err := db.Exec(query)
+    _, err = db.Exec(query)
     if err != nil {
         fmt.Println(err)
         return
     }
 
-    fmt.Println(result)
-    fmt.Println("Table 'bookshelf' was create succesfully.")
+    fmt.Println(" -> Table 'bookshelf' created.")
 
 }
 
@@ -107,13 +108,11 @@ func AddBookToDatabase(d *Database, b *Book) {
         return
     }
 
-    result, err := db.Exec(query, b.Name, b.Author, b.Path)
+    _, err = db.Exec(query, b.Name, b.Author, b.Path)
     if err != nil {
         return
     }
 
-    fmt.Printf("Book %s was create succesfully.\n", b.Name)
-
-    fmt.Println(result.LastInsertId())
+    fmt.Printf(" -> Book '%s' added to database.\n", b.Name)
 
 }
