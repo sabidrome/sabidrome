@@ -7,8 +7,7 @@ import (
 	"github.com/sabidrome/sabidrome/core"
 )
 
-func AddNewBook(db *core.Database) {
-    path := os.Args[2]
+func AddNewBook(db *core.Database, path string) {
 
     fmt.Println("[Debug] Begin add a new book")
     core.CreateDatabase(db)
@@ -21,16 +20,17 @@ func AddNewBook(db *core.Database) {
 
 func main() {
 
-    databaseObject := core.Database {
+    db := core.Database {
         Type: "sqlite3",
         Path: "./sabidrome.db",
     }
 
     command := os.Args[1]
+    path    := os.Args[2]
 
     switch command {
         case "add":
-            AddNewBook(&databaseObject)
+            AddNewBook(&db, path)
 
         case "rm":
             fmt.Println("Oh no, rm not implemented")
