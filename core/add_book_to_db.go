@@ -5,8 +5,6 @@ import (
 	"os"
 	"database/sql"
 
-
-    "rsc.io/quote"
 	"github.com/taylorskalyo/goreader/epub"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -120,7 +118,6 @@ func AddBookToDatabase(d *Database, b *Book) {
 func main() {
 
     fmt.Println("Hello, World!")
-    fmt.Println(quote.Go())
 
     databaseObject := Database {
         Type: "sqlite3",
