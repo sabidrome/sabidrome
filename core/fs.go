@@ -1,12 +1,12 @@
 package core
 
 import (
-	"fmt"
+    "fmt"
     "path/filepath"
     "strings"
 
-	"github.com/andreaskoch/go-fswatch"
-	"github.com/taylorskalyo/goreader/epub"
+    "github.com/andreaskoch/go-fswatch"
+    "github.com/taylorskalyo/goreader/epub"
 )
 
 type Book struct {
@@ -52,7 +52,7 @@ func FilesystemWatcher() {
     checkIntervalInSeconds := 2
 
     folderWatcher := fswatch.NewFolderWatcher(
-        "/tmq",
+        "/tmq/test",
         recurse,
         skipDotFilesAndFolders,
         checkIntervalInSeconds,
@@ -70,10 +70,10 @@ func FilesystemWatcher() {
                 fmt.Println(" -> Items have been moved")
 
             case changes := <-folderWatcher.ChangeDetails():
-                fmt.Printf(" -> '%s'\n", changes.String())
-                fmt.Printf(" -> New: '%#v'\n", changes.New())
-                fmt.Printf(" -> Modified: '%#v'\n", changes.Modified())
-                fmt.Printf(" -> Moved: '%v'\n", changes.Moved())
+                fmt.Printf("    -> '%s'\n", changes.String())
+                fmt.Printf("    -> New: '%#v'\n", changes.New())
+                fmt.Printf("    -> Modified: '%#v'\n", changes.Modified())
+                fmt.Printf("    -> Moved: '%v'\n", changes.Moved())
         }
     }
 

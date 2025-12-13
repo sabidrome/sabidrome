@@ -21,8 +21,10 @@ func main() {
             path    := os.Args[2]
             core.AddBook(&db, path)
 
-        case "rm":
-            fmt.Println("Oh no, rm not implemented")
+        case "search": {
+            query   := os.Args[2]
+            core.FindBook(&db, query)
+        }
 
         case "watch":
             core.FilesystemWatcher()

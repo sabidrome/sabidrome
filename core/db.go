@@ -93,3 +93,85 @@ func AddBook(db *Database, path string) {
 	fmt.Println("[Debug] End add a new book")
 
 }
+
+func FindBookByName(d *Database, name string) (*Book, error) {
+
+    query := `SELECT * FROM bookshelf WHERE name LIKE '%' || ? || '%'`
+
+    // fmt.Println(query)
+
+    db, err := sql.Open(d.Type, d.Path)
+    if err != nil {
+        fmt.Println(err)
+        return nil, err
+    }
+
+    row   := db.QueryRow(query, name)
+    // fmt.Println(row)
+    b     := &Book{}
+
+    var id int
+    err = row.Scan(&id, &b.Name, &b.Author, &b.Path)
+    if err != nil {
+        // fmt.Println(err)
+        return nil, err
+    }
+
+    return b, nil
+
+}
+
+func FindBookByAuthor(d *Database, author string) (*Book, error) {
+
+    query := `SELECT * FROM bookshelf WHERE author LIKE '%' || ? || '%'`
+
+    // fmt.Println(query)
+
+    db, err := sql.Open(d.Type, d.Path)
+    if err != nil {
+        fmt.Println(err)
+        return nil, err
+    }
+
+    row   := db.QueryRow(query, author)
+    // fmt.Println(row)
+    b     := &Book{}
+
+    var id int
+    err = row.Scan(&id, &b.Name, &b.Author, &b.Path)
+    if err != nil {
+        // fmt.Println(err)
+        return nil, err
+    }
+
+    return b, nil
+
+}
+
+func FindBook(db *Database, query string) {
+
+    fmt.Println("[Debug] Being search a book")
+    var book *Book
+    var err error
+
+    book, err = FindBookByName(db, query)
+    if err != nil {
+        fmt.Printf(" -> '%s' is not a book name in the db\n", query)
+    }
+
+    book, err = FindBookByAuthor(db, query)
+    if err != nil {
+        fmt.Printf(" -> '%s' is not a book author in the db\n", query)
+    }
+
+    if book != nil {
+        fmt.Println(" -> Found a match in the db")
+        fmt.Printf("    -> Name: %s\n", book.Name)
+        fmt.Printf("    -> Author: %s\n", book.Author)
+        fmt.Printf("    -> Path: %s\n", book.Path)
+    } else {
+        fmt.Println(" -> Did not find a match in the db")
+    }
+
+    fmt.Println("[Debug] End search a book")
+}
