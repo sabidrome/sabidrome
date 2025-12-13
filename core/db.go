@@ -56,6 +56,12 @@ func AddBookToDatabase(db *sql.DB, b *Book) {
 
 func AddBook(db *sql.DB, path string) {
 
+    exists := FindPath(db, path)
+    if exists {
+        fmt.Println("[Debug] File exists on database, skipping.")
+        return
+    }
+
 	book_struct := GetBookMetadataFromPath(path)
 	AddBookToDatabase(db, &book_struct)
 
@@ -117,5 +123,23 @@ func FindBook(db *sql.DB, query string) (int) {
         fmt.Printf("[Debug] There are no matches for '%s'\n", query)
 	return -1
     }
+
+}
+
+func FindPath(db *sql.DB, path string) bool {
+
+    fmt.Printf("[Debug] Looking exact match for %s\n", path)
+
+    query := `SELECT * FROM bookshelf WHERE path = ?`
+
+    row   := db.QueryRow(query, path)
+    b     := &Book{}
+
+    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
+    if err != nil {
+        return false
+    }
+
+    return true
 
 }
