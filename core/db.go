@@ -12,15 +12,13 @@ type Database struct {
     Path string
 }
 
-func InitDatabase(d *Database) {
+func InitDatabase(dialect string, path string) (db *sql.DB) {
 
-    db, err := sql.Open(d.Type, d.Path)
-    if err != nil {
-        fmt.Println(err)
-        return
+    db, err1 := sql.Open(dialect, path)
+    if err1 != nil {
+        fmt.Println(err1)
+        return nil
     }
-
-    fmt.Printf("[Debug] Succesfully connected to database %s\n", d.Path)
 
     query := `CREATE TABLE IF NOT EXISTS bookshelf (
         bookid INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,31 +28,23 @@ func InitDatabase(d *Database) {
 
         );`
 
-    _, err = db.Exec(query)
-    if err != nil {
-        fmt.Println(err)
-        return
+    _, err2 := db.Exec(query)
+    if err2 != nil {
+        fmt.Println(err2)
+        return nil
     }
 
-    fmt.Println("[Debug] Succesfully created table 'bookshelf'")
+    fmt.Println("[Debug] Succesfully initialized database.")
 
-    defer db.Close()
+    return db
 
 }
 
-func AddBookToDatabase(d *Database, b *Book) {
-
-    fmt.Printf("[Debug] '%s' requested for addition to database.\n", b.Name)
+func AddBookToDatabase(db *sql.DB, b *Book) {
 
     query := `INSERT INTO bookshelf (name, author, path) VALUES (?, ?, ?);`
 
-    db, err := sql.Open(d.Type, d.Path)
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    _, err = db.Exec(query, b.Name, b.Author, b.Path)
+    _, err := db.Exec(query, b.Name, b.Author, b.Path)
     if err != nil {
         fmt.Println(err)
         return
@@ -64,30 +54,23 @@ func AddBookToDatabase(d *Database, b *Book) {
 
 }
 
-func AddBook(db *Database, path string) {
+func AddBook(db *sql.DB, path string) {
 
 	book_struct := GetBookMetadataFromPath(path)
 	AddBookToDatabase(db, &book_struct)
 
 }
 
-func FindBookByName(d *Database, name string) (*Book, error) {
+func FindBookByName(db *sql.DB, name string) (*Book, error) {
 
     fmt.Printf("[Debug] Looking '%s' as book name in database.\n", name)
 
     query := `SELECT * FROM bookshelf WHERE name LIKE '%' || ? || '%'`
 
-    db, err := sql.Open(d.Type, d.Path)
-    if err != nil {
-        fmt.Println(err)
-        return nil, err
-    }
-
     row   := db.QueryRow(query, name)
     b     := &Book{}
 
-    var id int
-    err = row.Scan(&id, &b.Name, &b.Author, &b.Path)
+    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
     if err != nil {
         return nil, err
     }
@@ -98,28 +81,17 @@ func FindBookByName(d *Database, name string) (*Book, error) {
 
 }
 
-func FindBookByAuthor(d *Database, author string) (*Book, error) {
+func FindBookByAuthor(db *sql.DB, author string) (*Book, error) {
 
     fmt.Printf("[Debug] Looking '%s' as book author in database.\n", author)
 
     query := `SELECT * FROM bookshelf WHERE author LIKE '%' || ? || '%'`
 
-    // fmt.Println(query)
-
-    db, err := sql.Open(d.Type, d.Path)
-    if err != nil {
-        fmt.Println(err)
-        return nil, err
-    }
-
     row   := db.QueryRow(query, author)
-    // fmt.Println(row)
     b     := &Book{}
 
-    var id int
-    err = row.Scan(&id, &b.Name, &b.Author, &b.Path)
+    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
     if err != nil {
-        // fmt.Println(err)
         return nil, err
     }
 
@@ -129,12 +101,9 @@ func FindBookByAuthor(d *Database, author string) (*Book, error) {
 
 }
 
-func FindBook(db *Database, query string) {
+func FindBook(db *sql.DB, query string) (int) {
 
-    var book *Book
-    var err error
-
-    book, err = FindBookByName(db, query)
+    book, err := FindBookByName(db, query)
     if err != nil {
         book, err = FindBookByAuthor(db, query)
     }
@@ -143,7 +112,10 @@ func FindBook(db *Database, query string) {
         fmt.Printf("[Debug] Name   -> %s\n", book.Name)
         fmt.Printf("[Debug] Author -> %s\n", book.Author)
         fmt.Printf("[Debug] Path   -> %s\n", book.Path)
+	return book.Id
     } else {
         fmt.Printf("[Debug] There are no matches for '%s'\n", query)
+	return -1
     }
+
 }

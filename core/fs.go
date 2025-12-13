@@ -10,6 +10,7 @@ import (
 )
 
 type Book struct {
+    Id int
     Name string
     Author string
     Path string
