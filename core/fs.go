@@ -31,11 +31,11 @@ func GetBookMetadataFromPath(path string) ( bookObject Book ) {
         Path: path,
     }
 
-    fmt.Println(" -> File information extracted.")
+    fmt.Println("[Debug] File information extracted.")
 
-    fmt.Printf("    -> %s \n", bookObject.Name)
-    fmt.Printf("    -> %s \n", bookObject.Author)
-    fmt.Printf("    -> %s \n", bookObject.Path)
+    fmt.Printf("[Debug] Name   -> %s \n", bookObject.Name)
+    fmt.Printf("[Debug] Author -> %s \n", bookObject.Author)
+    fmt.Printf("[Debug] Path   -> %s \n", bookObject.Path)
 
     return bookObject
 

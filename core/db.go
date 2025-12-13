@@ -44,7 +44,7 @@ func InitDatabase(d *Database) {
 
 func AddBookToDatabase(d *Database, b *Book) {
 
-    fmt.Printf("[Debug] '%s' requested for addition to database.", b.Name)
+    fmt.Printf("[Debug] '%s' requested for addition to database.\n", b.Name)
 
     query := `INSERT INTO bookshelf (name, author, path) VALUES (?, ?, ?);`
 
@@ -56,6 +56,7 @@ func AddBookToDatabase(d *Database, b *Book) {
 
     _, err = db.Exec(query, b.Name, b.Author, b.Path)
     if err != nil {
+        fmt.Println(err)
         return
     }
 
@@ -72,7 +73,7 @@ func AddBook(db *Database, path string) {
 
 func FindBookByName(d *Database, name string) (*Book, error) {
 
-    fmt.Printf("[Debug] Looking '%s' as book name in database.", name)
+    fmt.Printf("[Debug] Looking '%s' as book name in database.\n", name)
 
     query := `SELECT * FROM bookshelf WHERE name LIKE '%' || ? || '%'`
 
@@ -99,7 +100,7 @@ func FindBookByName(d *Database, name string) (*Book, error) {
 
 func FindBookByAuthor(d *Database, author string) (*Book, error) {
 
-    fmt.Printf("[Debug] Looking '%s' as book author in database.", author)
+    fmt.Printf("[Debug] Looking '%s' as book author in database.\n", author)
 
     query := `SELECT * FROM bookshelf WHERE author LIKE '%' || ? || '%'`
 
@@ -135,19 +136,14 @@ func FindBook(db *Database, query string) {
 
     book, err = FindBookByName(db, query)
     if err != nil {
-        fmt.Println("[Debug] There are no books matching.")
-    }
-
-    book, err = FindBookByAuthor(db, query)
-    if err != nil {
-        fmt.Println("[Debug] There are no authors matching")
+        book, err = FindBookByAuthor(db, query)
     }
 
     if book != nil {
-        fmt.Println("[Debug] Found a match in the db")
-        fmt.Printf("[Debug] Name: %s\n", book.Name)
-        fmt.Printf("[Debug] Author: %s\n", book.Author)
-        fmt.Printf("[Debug] Path: %s\n", book.Path)
+        fmt.Printf("[Debug] Name   -> %s\n", book.Name)
+        fmt.Printf("[Debug] Author -> %s\n", book.Author)
+        fmt.Printf("[Debug] Path   -> %s\n", book.Path)
+    } else {
+        fmt.Printf("[Debug] There are no matches for '%s'\n", query)
     }
-
 }
