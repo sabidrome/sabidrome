@@ -14,6 +14,8 @@ func main() {
         Path: "./sabidrome.db",
     }
 
+    core.InitDatabase(&db)
+
     command := os.Args[1]
 
     switch command {
