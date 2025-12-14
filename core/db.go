@@ -117,6 +117,15 @@ func ListBookshelf(db *sql.DB) {
         fmt.Printf("%d || %s || %s || %s\n", id, name, author, path)
     }
 
+    valid := CheckValidFileType(path)
+    if !valid {
+        fmt.Println("[Debug] Not a valid book container, ignoring.")
+        return
+    }
+
+	book_struct := GetBookMetadataFromPath(path)
+	AddBookToDatabase(db, &book_struct)
+
 }
 
 func FindBookByName(db *sql.DB, name string) (*Book, error) {
