@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"fmt"
+    "os"
+    "fmt"
 
-	"github.com/sabidrome/sabidrome/core"
+    "github.com/sabidrome/sabidrome/core"
 )
 
 func main() {
