@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	var (
+    var (
         dialect = "sqlite3"
         path    = "./sabidrome.db"
     )
@@ -23,6 +23,13 @@ func main() {
             path    := os.Args[2]
             core.AddBook(db, path)
 
+        case "remove":
+            path    := os.Args[2]
+            core.RemoveBook(db, path)
+
+        case "list":
+            core.ListBookshelf(db)
+
         case "search":
             query   := os.Args[2]
             bookid := core.FindBook(db, query)
@@ -34,7 +41,7 @@ func main() {
 
 
         case "watch":
-            core.FilesystemWatcher()
+            core.FilesystemWatcher(db)
 
         default:
             fmt.Println("Unknown command")

@@ -1,16 +1,12 @@
 package core
 
 import (
-	"fmt"
-	"database/sql"
+    "fmt"
+    "os"
+    "database/sql"
 
-	_ "github.com/mattn/go-sqlite3"
+    _ "github.com/mattn/go-sqlite3"
 )
-
-type Database struct {
-    Type string
-    Path string
-}
 
 func InitDatabase(dialect string, path string) (db *sql.DB) {
 
@@ -56,14 +52,70 @@ func AddBookToDatabase(db *sql.DB, b *Book) {
 
 func AddBook(db *sql.DB, path string) {
 
-    exists := FindPath(db, path)
+    exists := FindPathInDatabase(db, path)
     if exists {
         fmt.Println("[Debug] File exists on database, skipping.")
         return
     }
 
-	book_struct := GetBookMetadataFromPath(path)
-	AddBookToDatabase(db, &book_struct)
+    book_struct := GetBookMetadataFromPath(path)
+    AddBookToDatabase(db, &book_struct)
+
+}
+
+func RemoveBookFromDatabase(db *sql.DB, path string) {
+
+    query := `DELETE FROM bookshelf WHERE path = ?`
+
+    _, err := db.Exec(query, path)
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    fmt.Printf("[Debug] '%s' removed from database succesfully\n", path)
+
+}
+
+func RemoveBook(db *sql.DB, path string) {
+
+    exists_in_db := FindPathInDatabase(db, path)
+    if !exists_in_db {
+        fmt.Println("[Debug] File does not exist on database, ignoring request.")
+        return
+    }
+
+    _, err := os.Stat(path)
+    if err == nil {
+        fmt.Println("[Debug] File exists on filesystem, ignoring request.")
+        return
+    }
+
+    RemoveBookFromDatabase(db, path)
+
+}
+
+func ListBookshelf(db *sql.DB) {
+
+    query := `SELECT * FROM bookshelf`
+
+    rows, err := db.Query(query)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    for rows.Next() {
+        var id int
+        var name string
+        var author string
+        var path string
+        err := rows.Scan(&id, &name, &author, &path)
+        if err != nil {
+            fmt.Println(err)
+            return
+        }
+        fmt.Printf("%d || %s || %s || %s\n", id, name, author, path)
+    }
 
 }
 
@@ -126,7 +178,7 @@ func FindBook(db *sql.DB, query string) (int) {
 
 }
 
-func FindPath(db *sql.DB, path string) bool {
+func FindPathInDatabase(db *sql.DB, path string) bool {
 
     fmt.Printf("[Debug] Looking exact match for %s\n", path)
 
