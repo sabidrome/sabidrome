@@ -62,6 +62,12 @@ func AddBook(db *sql.DB, path string) {
         return
     }
 
+    valid := CheckValidFileType(path)
+    if !valid {
+        fmt.Println("[Debug] Not a valid book container, ignoring.")
+        return
+    }
+
 	book_struct := GetBookMetadataFromPath(path)
 	AddBookToDatabase(db, &book_struct)
 
