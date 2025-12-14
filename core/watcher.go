@@ -1,7 +1,7 @@
 package core
 
 import (
-    "fmt"
+    "log/slog"
     "strings"
     "path/filepath"
     "database/sql"
@@ -44,14 +44,14 @@ func FilesystemWatcher(db *sql.DB) {
                 // Remove files are catched here
                 for i:=0; i<len(changes.Moved()); i++ {
                     book_path := changes.Moved()[i]
-                    fmt.Printf("[Debug] Moved element: %s\n", book_path)
+                    slog.Info("Missing file", "path", book_path)
                     RemoveBook(db, book_path)
                     ListBookshelf(db)
                 }
 
                 for i:=0; i<len(changes.New()); i++ {
                     book_path := changes.New()[i]
-                    fmt.Printf("[Debug] New element: %s\n", book_path)
+                    slog.Info("New file", "path", book_path)
                     AddBook(db, book_path)
                     ListBookshelf(db)
                 }

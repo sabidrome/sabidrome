@@ -3,11 +3,14 @@ package main
 import (
     "os"
     "fmt"
+    "log/slog"
 
     "github.com/sabidrome/sabidrome/core"
 )
 
 func main() {
+
+    slog.SetLogLoggerLevel(slog.LevelDebug)
 
     var (
         dialect = "sqlite3"

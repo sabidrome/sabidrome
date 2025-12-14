@@ -1,11 +1,12 @@
 package core
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
+    "log/slog"
 
-	"github.com/h2non/filetype"
-	"github.com/taylorskalyo/goreader/epub"
+    "github.com/h2non/filetype"
+    "github.com/taylorskalyo/goreader/epub"
 )
 
 type Book struct {
@@ -13,6 +14,7 @@ type Book struct {
     Name string
     Author string
     Path string
+    Identifier string
 }
 
 func GetBookMetadataFromPath(path string) ( bookObject Book ) {
@@ -25,17 +27,16 @@ func GetBookMetadataFromPath(path string) ( bookObject Book ) {
 
     book := rc.Rootfiles[0]
 
+    fmt.Println(book.Identifier)
+
     bookObject = Book {
         Name: book.Title,
         Author: book.Creator,
         Path: path,
+        Identifier: book.Identifier,
     }
 
-    fmt.Println("[Debug] File information extracted.")
-
-    fmt.Printf("[Debug] Name   -> %s \n", bookObject.Name)
-    fmt.Printf("[Debug] Author -> %s \n", bookObject.Author)
-    fmt.Printf("[Debug] Path   -> %s \n", bookObject.Path)
+    slog.Debug("File information extracted", "name", bookObject.Name, "author", bookObject.Author, "path", bookObject.Path, "identifier", bookObject.Identifier)
 
     return bookObject
 
@@ -47,16 +48,16 @@ func CheckValidFileType(path string) bool {
 
     kind, _ := filetype.Match(buf)
     if kind == filetype.Unknown {
-        fmt.Println("[Debug] Unkown filetype")
+    slog.Debug("Unkown filetype")
         return false
     }
 
     if kind.Extension != "zip" {
-        fmt.Printf("[Debug] Filetype %s is not supported.\n", kind.Extension)
+    slog.Debug("Filetype not supported", "kind", kind.Extension)
         return false
     }
 
-    fmt.Println("[Debug] File is a valid epub container")
+    slog.Debug("File is a valid epub container", "kind", kind.Extension)
 
     return true
 
