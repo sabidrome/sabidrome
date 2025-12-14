@@ -1,9 +1,8 @@
 package core
 
 import (
-    "fmt"
-    "os"
     "log/slog"
+    "os"
 
     "github.com/h2non/filetype"
     "github.com/taylorskalyo/goreader/epub"
@@ -26,8 +25,6 @@ func GetBookMetadataFromPath(path string) ( bookObject Book ) {
     defer rc.Close()
 
     book := rc.Rootfiles[0]
-
-    fmt.Println(book.Identifier)
 
     bookObject = Book {
         Name: book.Title,
