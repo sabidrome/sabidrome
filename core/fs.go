@@ -3,10 +3,7 @@ package core
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 
-	"github.com/andreaskoch/go-fswatch"
 	"github.com/h2non/filetype"
 	"github.com/taylorskalyo/goreader/epub"
 )
@@ -62,43 +59,5 @@ func CheckValidFileType(path string) bool {
     fmt.Println("[Debug] File is a valid epub container")
 
     return true
-
-}
-
-func FilesystemWatcher() {
-
-    recurse := true
-
-    skipDotFilesAndFolders := func(path string) bool {
-        return strings.HasPrefix(filepath.Base(path), ".")
-    }
-
-    checkIntervalInSeconds := 2
-
-    folderWatcher := fswatch.NewFolderWatcher(
-        "/tmq/test",
-        recurse,
-        skipDotFilesAndFolders,
-        checkIntervalInSeconds,
-    )
-
-    folderWatcher.Start()
-
-    for folderWatcher.IsRunning() {
-        select {
-
-            case <-folderWatcher.Modified():
-                fmt.Println(" -> New or modified items detected")
-
-            case <-folderWatcher.Moved():
-                fmt.Println(" -> Items have been moved")
-
-            case changes := <-folderWatcher.ChangeDetails():
-                fmt.Printf("    -> '%s'\n", changes.String())
-                fmt.Printf("    -> New: '%#v'\n", changes.New())
-                fmt.Printf("    -> Modified: '%#v'\n", changes.Modified())
-                fmt.Printf("    -> Moved: '%v'\n", changes.Moved())
-        }
-    }
 
 }
