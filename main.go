@@ -1,19 +1,20 @@
 package main
 
 import (
-	// "fmt"
-	"database/sql"
-	"log/slog"
-	"os"
+    // "fmt"
+    "database/sql"
+    "log/slog"
+    "os"
 
-	_ "github.com/mattn/go-sqlite3"
+    _ "github.com/mattn/go-sqlite3"
 
-	"github.com/sabidrome/sabidrome/core"
-	"github.com/sabidrome/sabidrome/db"
+    "github.com/sabidrome/sabidrome/core"
+    "github.com/sabidrome/sabidrome/db"
+    "github.com/sabidrome/sabidrome/fs"
 )
 
 
-func test_basic_funcs(session_db *sql.DB) {
+func test_basic_funcs_db(session_db *sql.DB) {
 
     db.BooksList(session_db)
 
@@ -33,6 +34,12 @@ func test_basic_funcs(session_db *sql.DB) {
 
 }
 
+func test_basic_funcs_fs(dir string) {
+
+    fs.ListDir(dir)
+
+}
+
 
 func main() {
 
@@ -43,8 +50,12 @@ func main() {
     command := os.Args[1]
 
     switch command  {
-        case "basic-test":
-            test_basic_funcs(session_db)
+        case "basic-test-db":
+            test_basic_funcs_db(session_db)
+
+        case "basic-test-fs":
+            test_basic_funcs_fs(os.Args[2])
+
         default:
             os.Exit(255)
     }
