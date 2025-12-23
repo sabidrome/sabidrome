@@ -1,23 +1,19 @@
 package main
 
 import (
-    // "fmt"
-    "log/slog"
+	// "fmt"
+	"database/sql"
+	"log/slog"
+	"os"
 
-    _ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 
-    "github.com/sabidrome/sabidrome/db"
-    "github.com/sabidrome/sabidrome/core"
+	"github.com/sabidrome/sabidrome/core"
+	"github.com/sabidrome/sabidrome/db"
 )
 
 
-
-
-func main() {
-
-    slog.SetLogLoggerLevel(slog.LevelDebug)
-
-    session_db := db.ConnectOrCreateDatabase()
+func test_basic_funcs(session_db *sql.DB) {
 
     db.BooksList(session_db)
 
@@ -34,5 +30,25 @@ func main() {
     // Test Remove Book
     db.RemoveBook(session_db, b.Id)
     db.BooksList(session_db)
+
+}
+
+
+func main() {
+
+    slog.SetLogLoggerLevel(slog.LevelDebug)
+
+    session_db := db.ConnectOrCreateDatabase()
+
+    command := os.Args[1]
+
+    switch command  {
+        case "basic-test":
+            test_basic_funcs(session_db)
+        default:
+            os.Exit(255)
+    }
+
+
 
 }
