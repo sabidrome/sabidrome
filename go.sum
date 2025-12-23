@@ -1,8 +1,2 @@
-github.com/andreaskoch/go-fswatch v1.0.0 h1:la8nP/HiaFCxP2IM6NZNUCoxgLWuyNFgH0RligBbnJU=
-github.com/andreaskoch/go-fswatch v1.0.0/go.mod h1:r5/iV+4jfwoY2sYqBkg8vpF04ehOvEl4qPptVGdxmqo=
-github.com/h2non/filetype v1.1.3 h1:FKkx9QbD7HR/zjK1Ia5XiBsq9zdLi5Kf3zGyFTAFkGg=
-github.com/h2non/filetype v1.1.3/go.mod h1:319b3zT68BvV+WRj7cwy856M2ehB3HqNOt6sy1HndBY=
 github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
 github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
-github.com/taylorskalyo/goreader v1.0.1 h1:eS9SYiHai2aAHhm+YMGRTqrvNt2aoRMTd7p6ftm0crY=
-github.com/taylorskalyo/goreader v1.0.1/go.mod h1:JrUsWCgnk4C3P5Jsr7Pf2mFrMpsR0ls/0bjR5aorYTI=
