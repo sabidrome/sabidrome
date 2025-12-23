@@ -10,7 +10,7 @@ import (
 
     "github.com/sabidrome/sabidrome/core"
     "github.com/sabidrome/sabidrome/db"
-    "github.com/sabidrome/sabidrome/fs"
+    "github.com/sabidrome/sabidrome/files"
 )
 
 
@@ -36,7 +36,7 @@ func test_basic_funcs_db(session_db *sql.DB) {
 
 func test_basic_funcs_fs(dir string) {
 
-    fs.ListDir(dir)
+    files.ListDir(dir)
 
 }
 
