@@ -4,6 +4,8 @@ import (
     "os"
     "log/slog"
     "database/sql"
+
+    "github.com/sabidrome/sabidrome/core"
 )
 
 func ConnectOrCreateDatabase() *sql.DB {
@@ -30,7 +32,7 @@ func ConnectOrCreateDatabase() *sql.DB {
         return db
 }
 
-func AddBook(db *sql.DB, b *Book) int64 {
+func AddBook(db *sql.DB, b *core.Book) int64 {
 
     query := `INSERT INTO bookshelf (title, creator, publisher, isbn, path) VALUES (?, ?, ?, ?, ?);`
 

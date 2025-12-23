@@ -6,19 +6,11 @@ import (
 
     _ "github.com/mattn/go-sqlite3"
     "github.com/sabidrome/sabidrome/db"
+    "github.com/sabidrome/sabidrome/core"
 )
 
 
-type Book struct {
 
-    Id int64
-    Title string
-    Creator string
-    Publisher string
-    ISBN int
-    Path string
-
-}
 
 func main() {
 
