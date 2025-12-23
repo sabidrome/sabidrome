@@ -7,7 +7,9 @@ import (
     "database/sql"
 
     _ "github.com/mattn/go-sqlite3"
+    "github.com/sabidrome/sabidrome/db"
 )
+
 
 func InitDatabase(dialect string, path string) (db *sql.DB) {
 
@@ -38,19 +40,6 @@ func InitDatabase(dialect string, path string) (db *sql.DB) {
 
 }
 
-func AddBookToDatabase(db *sql.DB, b *Book) {
-
-    query := `INSERT INTO bookshelf (name, author, path) VALUES (?, ?, ?);`
-
-    _, err := db.Exec(query, b.Name, b.Author, b.Path)
-    if err != nil {
-        return
-    }
-
-    slog.Debug("New book in database", "path", b.Path)
-
-}
-
 func AddBook(db *sql.DB, path string) {
 
     exists := FindPathInDatabase(db, path)
@@ -60,27 +49,21 @@ func AddBook(db *sql.DB, path string) {
     }
 
     book_struct := GetBookMetadataFromPath(path)
-    AddBookToDatabase(db, &book_struct)
 
-}
+    query := `INSERT INTO bookshelf (name, author, path) VALUES (?, ?, ?);`
 
-func RemoveBookFromDatabase(db *sql.DB, path string) {
-
-    query := `DELETE FROM bookshelf WHERE path = ?`
-
-    _, err := db.Exec(query, path)
+    _, err := db.Exec(query, b.Name, b.Author, b.Path)
     if err != nil {
-        slog.Error("Could not add book to database", "path", path)
-        os.Exit(1)
+	    return
     }
 
-    slog.Debug("Book removed from database", "path", path)
+    slog.Debug("New book in database", "path", b.Path)
 
 }
 
 func RemoveBook(db *sql.DB, path string) {
 
-    exists_in_db := FindPathInDatabase(db, path)
+    exists_in_db := db.
     if !exists_in_db {
         slog.Debug("File does not exist in database", "path", path)
         slog.Debug("Ignoring request")
@@ -94,7 +77,15 @@ func RemoveBook(db *sql.DB, path string) {
         return
     }
 
-    RemoveBookFromDatabase(db, path)
+    query := `DELETE FROM bookshelf WHERE path = ?`
+
+    _, err := db.Exec(query, path)
+    if err != nil {
+        slog.Error("Could not add book to database", "path", path)
+        os.Exit(1)
+    }
+
+    slog.Debug("Book removed from database", "path", path)
 
 }
 
@@ -121,82 +112,5 @@ func ListBookshelf(db *sql.DB) {
         str_id := strconv.Itoa(id)
         slog.Info("Current library", "id", str_id, "name", name, "author", author, "path", path)
     }
-
-}
-
-func FindBookByName(db *sql.DB, name string) (*Book, error) {
-
-    slog.Debug("Looking book by name in database", "name", name)
-
-    query := `SELECT * FROM bookshelf WHERE name LIKE '%' || ? || '%'`
-
-    row   := db.QueryRow(query, name)
-    b     := &Book{}
-
-    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
-    if err != nil {
-        return nil, err
-    }
-
-    return b, nil
-
-}
-
-func FindBookByAuthor(db *sql.DB, author string) (*Book, error) {
-
-    slog.Debug("Looking book by author in database", "author", author)
-
-    query := `SELECT * FROM bookshelf WHERE author LIKE '%' || ? || '%'`
-
-    row   := db.QueryRow(query, author)
-    b     := &Book{}
-
-    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
-    if err != nil {
-        return nil, err
-    }
-
-    return b, nil
-
-}
-
-func FindBook(db *sql.DB, query string) (int) {
-
-    book, err := FindBookByName(db, query)
-    if err != nil {
-        book, err = FindBookByAuthor(db, query)
-    }
-
-    if book != nil {
-
-        slog.Debug("Found a match", "query", query)
-        slog.Debug("Metadata", "id", book.Id)
-        slog.Debug("Metadata", "name", book.Name)
-        slog.Debug("Metadata", "author", book.Author)
-        slog.Debug("Metadata", "path", book.Path)
-
-	return book.Id
-    } else {
-        slog.Debug("There are no matches", "query", query)
-	return -1
-    }
-
-}
-
-func FindPathInDatabase(db *sql.DB, path string) bool {
-
-    slog.Debug("Looking exact match for", "path", path)
-
-    query := `SELECT * FROM bookshelf WHERE path = ?`
-
-    row   := db.QueryRow(query, path)
-    b     := &Book{}
-
-    err := row.Scan(&b.Id, &b.Name, &b.Author, &b.Path)
-    if err != nil {
-        return false
-    }
-
-    return true
 
 }
