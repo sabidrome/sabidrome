@@ -85,9 +85,9 @@ func BooksList(db *sql.DB) {
 
     // fmt.Printf("Title || Creator || Path\n")
 
-    var books []Book
+    var books []core.Book
     for rows.Next() {
-        b := &Book{}
+        b := &core.Book{}
         err := rows.Scan(&b.Id, &b.Title, &b.Creator, &b.Publisher, &b.ISBN, &b.Path)
         if err != nil {
             slog.Error("Error while fetching book list from database")

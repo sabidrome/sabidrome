@@ -5,6 +5,7 @@ import (
     "log/slog"
 
     _ "github.com/mattn/go-sqlite3"
+
     "github.com/sabidrome/sabidrome/db"
     "github.com/sabidrome/sabidrome/core"
 )
@@ -21,7 +22,7 @@ func main() {
     db.BooksList(session_db)
 
     // Test Add Book
-    b := &Book{0, "Dummy Title", "Dummy Creator", "Dummy Publisher", 12345, "/home/dummy/dummy.epub"}
+    b := &core.Book{0, "Dummy Title", "Dummy Creator", "Dummy Publisher", 12345, "/home/dummy/dummy.epub"}
     b.Id = db.AddBook(session_db, b)
     db.BooksList(session_db)
 
