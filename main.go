@@ -10,9 +10,25 @@ import (
 
     "github.com/sabidrome/sabidrome/core"
     "github.com/sabidrome/sabidrome/db"
-    "github.com/sabidrome/sabidrome/files"
 )
 
+func ListDir(dir string) {
+
+	err = filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			slog.Error("Failed to access path", "path", path, "error", err)
+			return err
+		}
+		slog.Debug("Visited file or dir", "path", path)
+		return nil
+	}
+	if err != nil {
+		slog.Error("Error walking the path", "path", dir)
+	}
+
+	)
+
+}
 
 func test_basic_funcs_db(session_db *sql.DB) {
 
@@ -36,7 +52,7 @@ func test_basic_funcs_db(session_db *sql.DB) {
 
 func test_basic_funcs_fs(dir string) {
 
-    files.ListDir(dir)
+    ListDir(dir)
 
 }
 
