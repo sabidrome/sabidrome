@@ -1,4 +1,4 @@
-module main.go
+module github.com/sabidrome/sabidrome
 
 go 1.25.5
 
