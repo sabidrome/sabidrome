@@ -5,6 +5,7 @@ import (
     "database/sql"
     "log/slog"
     "os"
+    "fmt"
 
     _ "github.com/mattn/go-sqlite3"
 
@@ -54,6 +55,11 @@ func main() {
 
         case "basic-test-fs":
             test_basic_funcs_fs(os.Args[2])
+
+        case "basic-test-epub":
+            files.ListEpubFileContent(os.Args[2])
+            text, _ := files.EpubContainerContent(os.Args[2])
+            fmt.Println(text)
 
         default:
             os.Exit(255)

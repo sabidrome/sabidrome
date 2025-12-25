@@ -1,10 +1,14 @@
 package files
 
 import (
-    "log/slog"
+    "archive/zip"
+    "io"
     "io/fs"
-    "path/filepath"
+    "log/slog"
     "os"
+    "path/filepath"
+    "strings"
+    "errors"
 )
 
 func ListDir(dir string) {
@@ -57,4 +61,53 @@ func ListBasePath(dir string) {
         slog.Error("Error walking the path", "path", dir)
     }
 
+}
+
+func ListEpubFileContent(path string) {
+
+    zipListing, err := zip.OpenReader(path)
+    if err != nil {
+        slog.Error("Could not open zip file", "path", path)
+    }
+    defer zipListing.Close()
+    for _, file := range zipListing.File {
+        slog.Debug("File inside zip", "file", file.Name)
+    }
+
+}
+
+func EpubContainerContent(zipPath string) (string, error) {
+
+    // Epub spec guarantees this file
+    containerPath := "META-INF/container.xml"
+
+    zipFile, err := zip.OpenReader(zipPath)
+    if err != nil {
+        slog.Error("Failed to open archive", "path", zipPath)
+        os.Exit(1)
+    }
+    defer zipFile.Close()
+
+    var b []byte
+
+    for _, file := range zipFile.File {
+        if strings.EqualFold(file.Name, containerPath) {
+            v, err := file.Open()
+            if err != nil {
+                slog.Error("Failed to open archived file", "name", file.Name)
+                os.Exit(1)
+            }
+            defer v.Close()
+
+            b, err = io.ReadAll(v)
+            if err != nil {
+                slog.Error("Failed to read content of archived file", "name", file.Name)
+                os.Exit(1)
+            }
+        }
+    }
+    if b != nil {
+        return string(b), nil
+    }
+    return "", errors.New("File not found")
 }

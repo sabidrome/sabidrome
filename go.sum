@@ -1,4 +1,2 @@
 github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=
 github.com/mattn/go-sqlite3 v1.14.32/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxUwlHK0RXw+Y=
-github.com/sabidrome/sabidrome v0.0.0-20251223213118-58aff64182bc h1:o+dy92loISzA9x1cgczrsSQ/IFQ+ljJ6PZeEs7DzERY=
-github.com/sabidrome/sabidrome v0.0.0-20251223213118-58aff64182bc/go.mod h1:6cM9c5ppnwD+dDV6xlGcFTnZkBlCEHQnx2kCNGBy04U=
