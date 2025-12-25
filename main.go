@@ -5,6 +5,8 @@ import (
     "database/sql"
     "log/slog"
     "os"
+    "io/fs"
+    "path/filepath"
 
     _ "github.com/mattn/go-sqlite3"
 
@@ -14,19 +16,20 @@ import (
 
 func ListDir(dir string) {
 
-	err = filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			slog.Error("Failed to access path", "path", path, "error", err)
-			return err
-		}
-		slog.Debug("Visited file or dir", "path", path)
-		return nil
-	}
-	if err != nil {
-		slog.Error("Error walking the path", "path", dir)
-	}
+    aux_func := func(path string, info fs.FileInfo, err error) error {
+        if err != nil {
+            slog.Error("Failed to access path", "path", path, "error", err)
+            return err
+        }
+        slog.Debug("Visited file or dir", "path", path)
+        return nil
 
-	)
+    }
+
+    err := filepath.Walk(dir, aux_func)
+    if err != nil {
+        slog.Error("Error walking the path", "path", dir)
+    }
 
 }
 
