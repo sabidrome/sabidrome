@@ -41,6 +41,21 @@ func test_basic_funcs_fs(dir string) {
 
 }
 
+func test_basic_funcs_epub(dir string) {
+
+    //files.ListEpubFileContent(dir)
+
+    c := files.EpubContainerAsStruct(dir)
+    fmt.Print(c.Rootfiles.Rootfile.FullPath)
+    fmt.Print(c.Rootfiles.Rootfile.MediaType)
+
+    o := files.EpubOpfAsStruct(dir)
+    fmt.Print(o.Metadata)
+    fmt.Print(o.Manifest)
+    fmt.Print(o.Spine)
+
+}
+
 func main() {
 
     slog.SetLogLoggerLevel(slog.LevelDebug)
@@ -54,12 +69,18 @@ func main() {
             test_basic_funcs_db(session_db)
 
         case "basic-test-fs":
+            if len(os.Args) < 3 {
+                slog.Error("Needs at least 3 arguments")
+                os.Exit(1)
+            }
             test_basic_funcs_fs(os.Args[2])
 
         case "basic-test-epub":
-            files.ListEpubFileContent(os.Args[2])
-            text, _ := files.EpubContainerContent(os.Args[2])
-            fmt.Println(text)
+            if len(os.Args) < 3 {
+                slog.Error("Needs at least 3 arguments")
+                os.Exit(1)
+            }
+            test_basic_funcs_epub(os.Args[2])
 
         default:
             os.Exit(255)
