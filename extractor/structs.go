@@ -1,8 +1,127 @@
 package extractor
 
 import (
+	"archive/zip"
 	"encoding/xml"
+	"io"
+	"log/slog"
+	"strings"
 )
+
+/*
+Epub represents an EPUB in memory
+*/
+type Epub struct {
+	*zip.ReadCloser
+	Path      string
+	Container Container
+	Package   Package
+}
+
+/*
+UpdateContainer reads container.xml to
+unmarshal it on the Epub struct
+*/
+func (epub *Epub) UpdateContainer() {
+
+	epubFile, err := zip.OpenReader(epub.Path)
+	if err != nil {
+		slog.Error("Failed to open archive", "path", epub.Path, "err", err)
+		return
+	}
+	defer epubFile.Close()
+
+	var b []byte
+	for _, file := range epubFile.File {
+		if strings.EqualFold(file.Name, "META-INF/container.xml") {
+
+			v, err := file.Open()
+			if err != nil {
+				slog.Error("Failed to open archived file", "name", file.Name, "err", err)
+				defer v.Close()
+				return
+			}
+
+			b, err = io.ReadAll(v)
+			if err != nil {
+				slog.Error("Failed to read content of archived file", "name", file.Name, "err", err)
+				defer v.Close()
+				return
+			}
+
+			defer v.Close()
+			break
+		}
+	}
+
+	if b == nil {
+		slog.Error("Failed to find container file", "name", epub.Path)
+		return
+	}
+
+	myContainer := new(Container)
+
+	err = xml.Unmarshal(b, &myContainer)
+	if err != nil {
+		slog.Error("Error unmarshalling container.xml", "err", err)
+		return
+	}
+
+	epub.Container = *myContainer
+}
+
+/*
+UpdatePackage reads the package document
+to unmarshal it on the Epub struct
+*/
+func (epub *Epub) UpdatePackage() {
+
+	epubFile, err := zip.OpenReader(epub.Path)
+	if err != nil {
+		slog.Error("Failed to open archive", "path", epub.Path, "err", err)
+		return
+	}
+	defer epubFile.Close()
+
+	var b []byte
+
+	for _, file := range epubFile.File {
+		// Current implementation only deals with first rootfile
+		if strings.EqualFold(file.Name, epub.Container.Rootfiles.Rootfile[0].FullPath) {
+
+			v, err := file.Open()
+			if err != nil {
+				slog.Error("Failed to open archived file", "name", file.Name, "err", err)
+				defer v.Close()
+				return
+			}
+
+			b, err = io.ReadAll(v)
+			if err != nil {
+				slog.Error("Failed to read content of archived file", "name", file.Name, "err", err)
+				defer v.Close()
+				return
+			}
+
+			defer v.Close()
+			break
+
+		}
+
+		if b == nil {
+			slog.Error("Failed to find package document", "name", epub.Path)
+		}
+
+		myPackage := new(Package)
+		err = xml.Unmarshal(b, &myPackage)
+		if err != nil {
+			slog.Error("Error unmarshalling package document", "err", err)
+			return
+		}
+
+		epub.Package = *myPackage
+	}
+}
 
 /*
 Container encapsulates all the information
